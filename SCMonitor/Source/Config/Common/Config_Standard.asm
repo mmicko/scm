@@ -48,6 +48,7 @@ HW_SC130:   .EQU 130            ;S7, "SC130", SC130 Z180 SBC / motherboard
 ;HW_SC503:  .EQU 216            ;F3, SC503 Z180 processor for Z50Bus
 ;HW_SC516:  .EQU 216            ;F1, SC516 Z80 processor for Z50Bus
 ;HW_SC519:  .EQU 219            ;F2, SC519 Z80 processor for Z50Bus
+HW_TIM011:  .EQU 220            ;T0, "TIM-011", TIM-011 motherboard
 
 
 ; **********************************************************************

@@ -13,7 +13,8 @@
 ; Only one build configuration can be defined so comment out the others
 
 ; Tested with this version of SCM code
-#INCLUDE   Config\config_F1_SC516_118.asm    ;F1, "Z50Bus/Z80",  as SC516 & SC118
+#INCLUDE   Config\config_T0_TIM011.asm        ;T0, "TIM-011/Z180",as TIM-011
+;#INCLUDE   Config\config_F1_SC516_118.asm    ;F1, "Z50Bus/Z80",  as SC516 & SC118
 ;#INCLUDE   Config\config_F2_SC519.asm        ;F2, "Z50Bus/Z80",  as SC519+518
 ;#INCLUDE   Config\config_F3_SC503_140.asm    ;F3, "Z50Bus/Z180", as SC503 & SC140
 ;#INCLUDE   Config\config_S2_SC114.asm        ;S2, "RC/Z80",      as SC114
