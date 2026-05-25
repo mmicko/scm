@@ -85,9 +85,9 @@ H_Test:     DI
 #IFNDEF     DO_NOT_REMAP_MEMORY ;Leave memory map unchanged
             LD   A, 0x00        ;Physical memory base address:
             OUT0 (BBR), A       ;  Bank Base   = 0x00000 to 0x07FFF
-            LD   A, 0x80        ;Physical memory base address:
-            OUT0 (CBR), A       ;  Common Base = 0x88000 to 0x8FFFF
-;           LD   A, 0x80        ;Logical memory base addresses:
+            LD   A, 0x40        ;Physical memory base address:
+            OUT0 (CBR), A       ;  Common Base = 0x48000 to 0x4FFFF
+            LD   A, 0x80        ;Logical memory base addresses:
             OUT0 (CBAR), A      ;  Bank = 0x0000, Common = 0x8000
 #ENDIF
 
