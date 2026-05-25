@@ -46,8 +46,8 @@ kCode:      .SET 0x0100         ;Code starts at 0x0100 (not 0x0000)
 ; **********************************************************************
 ; Included BIOS support for optional hardware
 
-;TIM011 Motherboard (Z80 CPU, RAM, ROM, Clock)
-#INCLUDE    Config\Modules\TIM011_native.asm
+;TIM011 Motherboard (Z180 CPU, RAM, ROM, Clock)
+#INCLUDE    Config\Modules\TIM011.asm
 
 ; **********************************************************************
 ; Any required customisations should be here, eg:
