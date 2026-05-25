@@ -22,10 +22,10 @@ kConfHardw: .SET HW_TIM011      ;Hardware identifier (if known)
 
 ; Console devices
 kConDef:    .SET 1              ;Default console device (1 to 6)
-kBaud1Def:  .SET 0x11           ;Console device 1 default baud rate 
-kBaud2Def:  .SET 0x11           ;Console device 2 default baud rate 
-kBaud3Def:  .SET 0x11           ;Console device 3 default baud rate 
-kBaud4Def:  .SET 0x11           ;Console device 4 default baud rate 
+kBaud1Def:  .SET 0x38           ;Console device 1 default baud rate 
+kBaud2Def:  .SET 0x38           ;Console device 2 default baud rate 
+kBaud3Def:  .SET 0x38           ;Console device 3 default baud rate 
+kBaud4Def:  .SET 0x38           ;Console device 4 default baud rate 
 
 ; Simple I/O ports
 kPrtIn:     .SET 0x00           ;General input port

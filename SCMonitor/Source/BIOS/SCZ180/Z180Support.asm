@@ -214,11 +214,11 @@ Z180Init:
             OUT0 (CCR), A
 
 ; Set reload registers for 1ms timer
-; Timer input clock is PHI/20 = 18,432,000MHz/20 = 921.6kHz
-; Relead time to give 1ms timer is 921.6 (0x039A when rounded up)
-            LD   A,0x9A
+; Timer input clock is PHI/20 = 12,288,000 / 20 = 614.4 kHz
+; Relead time to give 1ms timer is 614.4 (0x0267 when rounded up)
+            LD   A,0x67
             OUT0 (RLDR0L),A
-            LD   A,0x03
+            LD   A,0x02
             OUT0 (RLDR0H),A
 
 ; Timer Control Register

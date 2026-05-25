@@ -225,18 +225,18 @@
 @Div64      .EQU 6
 @SettingsTable:                 ;Code,  Baud,  Sample, Prescal, BRDivide
             .DB  0              ; 1 = 230400 (not supported)
-            .DB  @Sam16 + @Pre10 + @Div1  ; 2 = 115200
-            .DB  @Sam16 + @Pre10 + @Div2  ; 3 =  57600
-            .DB  @Sam16 + @Pre30 + @Div1  ; 4 =  38400
-            .DB  @Sam16 + @Pre30 + @Div2  ; 5 =  19200
-            .DB  @Sam16 + @Pre10 + @Div8  ; 6 =  14400
-            .DB  @Sam64 + @Pre30 + @Div1  ; 7 =   9600
-            .DB  @Sam64 + @Pre30 + @Div2  ; 8 =   4800
-            .DB  @Sam64 + @Pre30 + @Div4  ; 9 =   2400
-            .DB  @Sam64 + @Pre30 + @Div8  ;10 =   1200
-            .DB  @Sam64 + @Pre30 + @Div16 ;11 =    600
-            .DB  @Sam64 + @Pre30 + @Div32 ;12 =    300
-            .DB  @Sam64 + @Pre30 + @Div64 ;13 =    150
+            .DB  0                        ; 2 = 115200 (not supported)
+            .DB  0                        ; 3 =  57600 (not supported)
+            .DB  @Sam16 + @Pre10 + @Div1  ; 4 =  38400
+            .DB  @Sam16 + @Pre10 + @Div2  ; 5 =  19200
+            .DB  0                        ; 6 =  14400 (not supported)
+            .DB  @Sam64 + @Pre10 + @Div1  ; 7 =   9600
+            .DB  @Sam64 + @Pre10 + @Div2  ; 8 =   4800
+            .DB  @Sam64 + @Pre10 + @Div4  ; 9 =   2400
+            .DB  @Sam64 + @Pre10 + @Div8  ;10 =   1200
+            .DB  @Sam64 + @Pre10 + @Div16 ;11 =    600
+            .DB  @Sam64 + @Pre10 + @Div32 ;12 =    300
+            .DB  @Sam64 + @Pre10 + @Div64 ;13 =    150
 
 
 ; **********************************************************************
