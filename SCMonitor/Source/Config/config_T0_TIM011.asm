@@ -21,7 +21,7 @@ kROMTop:    .SET 0x7F           ;Top of banked ROM (hi byte only)
 kConfHardw: .SET HW_TIM011      ;Hardware identifier (if known)
 
 ; Console devices
-kConDef:    .SET 1              ;Default console device (1 to 6)
+kConDef:    .SET 3              ;Default console device (1 to 6)
 kBaud1Def:  .SET 0x38           ;Console device 1 default baud rate 
 kBaud2Def:  .SET 0x96           ;Console device 2 default baud rate 
 kBaud3Def:  .SET 0x38           ;Console device 3 default baud rate 
@@ -37,6 +37,8 @@ kCode:      .SET 0x0100         ;Code starts at 0x0100 (not 0x0000)
 #DEFINE     DO_NOT_REMAP_MEMORY ;Leave memory mapping hardware unchanged
 #UNDEFINE   IncludeRomFS        ;Do not include RomFS
 #ENDIF
+
+#DEFINE     INCLUDE_TIM011      ;Include TIM-011 Terminal support in this build
 
 ; System options
 ;#DEFINE    ROM_ONLY            ;No option to assemble to upper memory

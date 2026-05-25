@@ -223,6 +223,12 @@ LCD16x2:
 #INCLUDE    BIOS\Framework\Devices\LCD16x2.asm
 #ENDIF
 
+; TIM-011 Terminal
+#IFDEF      INCLUDE_TIM011
+TIMTERM:
+#INCLUDE    BIOS\Framework\Devices\TIM_Terminal.asm
+#ENDIF
+
 
 ; **********************************************************************
 ; Ensure we assemble to code area
@@ -328,6 +334,9 @@ Interfaces:
 #ENDIF
 #IFDEF      INCLUDE_LCD16x2
             .DW  LCD16x2
+#ENDIF
+#IFDEF      INCLUDE_TIM011
+            .DW  TIMTERM
 #ENDIF
             .DW  0              ;End of list
 
