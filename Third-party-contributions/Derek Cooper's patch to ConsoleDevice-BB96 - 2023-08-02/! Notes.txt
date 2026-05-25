@@ -1,0 +1,46 @@
+
+
+Fixes the problem of XMODEM failing when binary file containg byte 0x00 is received.
+
+
+
+From: https://groups.google.com/g/retro-comp/c/Vlix-_HGzQc
+
+
+
+
+Thanks Bill for pointing me in the right direction.
+
+I have patched (botched!) the Console driver for bit bang 9600 to remove the issue of the NULL character being used to denote nothing received. 
+
+Re-compile the PutSys hex file and installed it to my SC114
+
+Success, I am now able to use Xmodem transfers for binary files etc exactly the same as the SIO card. I transferred a 200k file that was a ARC file of sc2 and it works fine.
+
+I have attached the patched file for you to try.
+
+I have also attached a version of PutSys, if you want to try it right away!
+
+Have fun
+Derek
+ps do you think Steve would want this sent as a patch or something?
+
+
+
+
+
+Further info,
+
+The stock version of XMODEM.COM still seems to have issues, I suspect it's timing issue with the start frame NAK/ACK
+
+My own version of xmodem, on github here: https://github.com/coopzone-dc/xmodem80
+works fine but can take up to 30 seconds to start the transfer, again i think it's the initial NAK/ACK being slow, But this version tries a bit harder and eventually starts.
+
+I find the best transfer package to use is actually Zmodem - because you can select multiple files to send, start the transfer, and all the files are sent, waiting and ready when you come back to the console. I found ZMRX and ZMTX a long time ago (can't recall where from)
+
+If you would like any of the programs mentioned just ask.
+
+Derek
+
+
+

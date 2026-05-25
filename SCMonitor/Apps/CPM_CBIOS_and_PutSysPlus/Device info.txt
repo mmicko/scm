@@ -1,0 +1,51 @@
+
+SC CP/M BIOS device info
+========================
+
+Current console device is CON:
+
+SIO port A is device CRT:
+SIO port B is device TTY: 
+
+
+FOLLOWING CP/M STARTUP...
+
+A>stat dev:
+CON: is CRT:
+RDR: is TTY:
+PUN: is TTY:
+LST: is TTY:
+
+A>stat val:
+Temp R/O Disk: d:=R/O
+Set Indicator: d:filename.typ $R/O $R/W $SYS $DIR
+Disk Status  : DSK: d:DSK:
+User Status  : USR:
+Iobyte Assign:
+CON: = TTY: CRT: BAT: UC1:
+RDR: = TTY: PTR: UR1: UR2:
+PUN: = TTY: PTP: UP1: UP2:
+LST: = TTY: CRT: LPT: UL1:
+
+Send file to SIO A
+A>pip crt:=b.txt
+
+Send file to SIO B
+A>pip tty:=b.txt
+or
+A>pip uc1:=b.txt
+or
+A>pip lpt:=b.txt
+
+
+REASSIGN DEVICES
+
+Set console port to SIO A
+A>stat con:=crt:
+
+Set console port to SIO B
+A>stat con:=tty:
+or
+A>stat con:=uc1:
+
+

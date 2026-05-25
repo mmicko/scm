@@ -1,0 +1,294 @@
+                    0001  ; **********************************************************************
+                    0002  ; **  I2C demo/test                             by Stephen C Cousins  **
+                    0003  ; **********************************************************************
+                    0004  
+                    0005  ; This program demonstrates the use of SC126's I2C port with a 
+                    0006  ; PCF8574 (I2C remote 8-bit I/O expander)
+                    0007  ;
+                    0008  ; This code has delays between all I/O operations to ensure it works
+                    0009  ; with the slowest I2C devices
+                    0010  
+                    0011  
+                    0012  ; I2C transfer sequence
+                    0013  ;   +-------+  +---------+  +---------+     +---------+  +-------+
+                    0014  ;   | Start |  | Address |  | Data    | ... | Data    |  | Stop  |
+                    0015  ;   |       |  | frame   |  | frame 1 |     | frame N |  |       |
+                    0016  ;   +-------+  +---------+  +---------+     +---------+  +-------+
+                    0017  ;
+                    0018  ;
+                    0019  ; Start condition                     Stop condition
+                    0020  ; Output by master device             Output by master device
+                    0021  ;       ----+                                      +----
+                    0022  ; SDA       |                         SDA          |
+                    0023  ;           +-------                        -------+
+                    0024  ;       -------+                                +-------
+                    0025  ; SCL          |                      SCL       |
+                    0026  ;              +----                        ----+
+                    0027  ;
+                    0028  ;
+                    0029  ; Address frame
+                    0030  ; Clock and data output from master device
+                    0031  ; Receiving device outputs acknowledge 
+                    0032  ;          +-----+-----+-----+-----+-----+-----+-----+-----+     +---+
+                    0033  ; SDA      | A 7 | A 6 | A 5 | A 4 | A 3 | A 2 | A 1 | R/W | ACK |   |
+                    0034  ;       ---+-----+-----+-----+-----+-----+-----+-----+-----+-----+   +---
+                    0035  ;            +-+   +-+   +-+   +-+   +-+   +-+   +-+   +-+   +-+
+                    0036  ; SCL        | |   | |   | |   | |   | |   | |   | |   | |   | |
+                    0037  ;       -----+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---------
+                    0038  ;
+                    0039  ;
+                    0040  ; Data frame 
+                    0041  ; Clock output by master device
+                    0042  ; Data output by transmitting device
+                    0043  ; Receiving device outputs acknowledge 
+                    0044  ;          +-----+-----+-----+-----+-----+-----+-----+-----+     +---+
+                    0045  ; SDA      | D 7 | D 6 | D 5 | D 4 | D 3 | D 2 | D 1 | D 0 | ACK |   |
+                    0046  ;       ---+-----+-----+-----+-----+-----+-----+-----+-----+-----+   +---
+                    0047  ;            +-+   +-+   +-+   +-+   +-+   +-+   +-+   +-+   +-+
+                    0048  ; SCL        | |   | |   | |   | |   | |   | |   | |   | |   | |
+                    0049  ;       -----+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---+ +---------
+                    0050  ;
+                    0051  ;
+                    0052  
+                    0053              .PROC Z80           ;SCWorkshop select processor
+                    0054  
+                    0055              .ORG 0x8000
+                    0056  
+                    0057  
+000C:               0058  I2C_PORT:   .EQU 0x0C           ;Host I2C port address
+8000:               0059  I2C_SDA_WR:
+                    0059  I2C_SDA_WR: .EQU 7              ;Host I2C write SDA bit number
+8000:               0060  I2C_SCL_WR:
+                    0060  I2C_SCL_WR: .EQU 0              ;Host I2C write SCL bit number
+8000:               0061  I2C_SDA_RD:
+                    0061  I2C_SDA_RD: .EQU 7              ;Host I2C read SDA bit number
+                    0062  
+0070:               0063  I2C_ADDR:   .EQU 0x70           ;I2C device addess
+                    0064  
+                    0065  
+8000: 3E C0         0066              LD   A,0b11000000   ;SCL and SDA high + LED 1
+8002: CD D0 80      0067              CALL I2C_WrPort     ;SCL high and SDA high
+                    0068  
+8005: 3E 70         0069              LD   A,I2C_ADDR     ;I2C address to write to
+8007: CD 38 80      0070              CALL I2C_Open       ;Open I2C device for write
+800A: C0            0071              RET  NZ
+                    0072  
+800B: 3E AA         0073              LD   A,0xAA
+800D: CD 41 80      0074              CALL I2C_Write      ;Write I2C device's output bits
+8010: C0            0075              RET  NZ
+                    0076  
+8011: 11 E8 03      0077              LD   DE,1000
+8014: CD E5 80      0078              CALL API_Delay      ;Delay 1000ms
+                    0079  
+8017: 3E 55         0080              LD   A,0x55
+8019: CD 41 80      0081              CALL I2C_Write      ;Write I2C device's output bits
+801C: C0            0082              RET  NZ
+                    0083  
+801D: 11 E8 03      0084              LD   DE,1000
+8020: CD E5 80      0085              CALL API_Delay      ;Delay 1000ms
+                    0086  
+8023: 3E FF         0087              LD   A,0xFF
+8025: CD 41 80      0088              CALL I2C_Write      ;Set output bits
+8028: C0            0089              RET  NZ
+                    0090  
+8029: CD 3F 80      0091              CALL I2C_Close      ;Close I2C device 
+                    0092  
+                    0093  
+802C: 3E 71         0094              LD   A,I2C_ADDR+1   ;I2C address to write to
+802E: CD 38 80      0095              CALL I2C_Open       ;Open I2C device for read
+                    0096  
+8031: CD 78 80      0097              CALL I2C_Read       ;Read from I2C device
+                    0098  
+8034: CD 3F 80      0099              CALL I2C_Close      ;Close I2C device
+                    0100  
+                    0101  
+8037: C9            0102              RET
+                    0103  
+                    0104  
+                    0105  
+                    0106  ; I2C bus open device
+                    0107  ;   On entry: A = Device address (bit zero is read flag)
+                    0108  ;             SCL = unknown, SDA = unknown
+                    0109  ;   On exit:  If successfully A = 0 and Z flagged
+                    0110  ;             If successfully A = Error and NZ flagged
+                    0111  ;             SCL = lo, SDA = lo
+                    0112  ;             HL IX IY preserved
+                    0113  ; Possible errors:  1 = Bus jammed (not implemented)
+8038: F5            0114  I2C_Open:   PUSH AF
+8039: CD 9C 80      0115              CALL I2C_Start      ;Output start condition
+803C: F1            0116              POP  AF
+803D: 18 02         0117              JR   I2C_Write      ;Write data byte
+                    0118  
+                    0119  
+                    0120  ; I2C bus close device
+                    0121  ;   On entry: SCL = unknown, SDA = unknown
+                    0122  ;   On exit:  If successfully A=0 and Z flagged
+                    0123  ;             If successfully A=Error and NZ flagged
+                    0124  ;             SCL = hi, SDA = hi
+                    0125  ;             HL IX IY preserved
+                    0126  ; Possible errors:  1 = Bus jammed ??????????
+803F: 18 68         0127  I2C_Close:  JR   I2C_Stop       ;Output stop condition
+                    0128  
+                    0129  
+                    0130  ; I2C bus transmit frame (address or data)
+                    0131  ;   On entry: A = Data byte, or
+                    0132  ;                 Address byte (bit zero is read flag)
+                    0133  ;             SCL = low, SDA = low
+                    0134  ;   On exit:  If successful A=0 and Z flagged
+                    0135  ;                SCL = lo, SDA = lo
+                    0136  ;             If unsuccessful A=Error and NZ flagged
+                    0137  ;                SCL = high, SDA = high, I2C closed
+                    0138  ;             HL IX IY preserved
+8041: 57            0139  I2C_Write:  LD   D,A            ;Store byte to be written
+8042: 06 08         0140              LD   B,8            ;8 data bits, bit 7 first
+8044: CB 12         0141  @Wr_Loop:   RL   D              ;Test M.S.Bit
+8046: 38 05         0142              JR   C,@Bit_Hi      ;High, so skip
+8048: CD CB 80      0143              CALL I2C_SDA_LO     ;SDA low   (SCL lo, SDA = data bit)
+804B: 18 03         0144              JR   @Bit_Clk
+804D: CD C4 80      0145  @Bit_Hi:    CALL I2C_SDA_HI     ;SDA high  (SCL lo, SDA = data bit)
+8050: CD B6 80      0146  @Bit_Clk:   CALL I2C_SCL_HI     ;SCL high  (SCL hi, SDA = data bit)
+8053: CD BD 80      0147              CALL I2C_SCL_LO     ;SCL low   (SCL lo, SDA = data bit)
+8056: 10 EC         0148              DJNZ @Wr_Loop
+                    0149  ; Test for acknowledge from slave (receiver)
+                    0150  ; On arriving here, SCL = lo, SDA = data bit
+8058: CD C4 80      0151              CALL I2C_SDA_HI     ;SDA high  (SCL lo, SDA hi/ack)
+805B: CD B6 80      0152              CALL I2C_SCL_HI     ;SCL high  (SCL hi, SDA hi/ack)
+805E: CD DC 80      0153              CALL I2C_RdPort     ;Read SDA input
+8061: 47            0154              LD   B,A
+8062: CD BD 80      0155              CALL I2C_SCL_LO     ;SCL low   (SCL lo, SDA = hi)
+8065: CB 78         0156              BIT  I2C_SDA_RD,B
+8067: 20 02         0157              JR   NZ,@NoAck      ;Skip if no acknowledge
+8069: AF            0158              XOR  A              ;Return success A=0 and Z flagged
+806A: C9            0159              RET
+                    0160  ; I2C STOP required as no acknowledge
+                    0161  ; On arriving here, SCL = lo, SDA = hi
+806B: CD CB 80      0162  @NoAck:     CALL I2C_SDA_LO     ;SDA low   (SCL lo, SDA = lo)
+806E: CD B6 80      0163              CALL I2C_SCL_HI     ;SCL high  (SCL hi, SDA = lo)
+8071: CD C4 80      0164              CALL I2C_SDA_HI     ;SDA low   (SCL hi, SDA = hi)
+8074: 3E 02         0165              LD   A,2            ;Return error 2 - No Ack
+8076: B7            0166              OR   A              ;  and NZ flagged
+8077: C9            0167              RET
+                    0168  
+                    0169  
+                    0170  ; I2C bus receive frame (data)
+                    0171  ;   On entry: SCL low, SDA low
+                    0172  ;   On exit:  If successful A = data byte and Z flagged
+                    0173  ;               SCL = low, SDA = low
+                    0174  ;             If unsuccessul A = Error and NZ flagged
+                    0175  ;               SCL = low, SDA = low ??? no failures supported
+                    0176  ;             HL IX IY preserved
+8078: 06 08         0177  I2C_Read:   LD   B,8            ;8 data bits, 7 first
+807A: CD C4 80      0178              CALL I2C_SDA_HI     ;SDA high  (SCL lo, SDA hi/input)
+807D: CD B6 80      0179  @Rd_Loop:   CALL I2C_SCL_HI     ;SCL high  (SCL hi, SDA hi/input)
+8080: CD DC 80      0180              CALL I2C_RdPort     ;Read SDA input bit
+8083: 37            0181              SCF                 ;Set carry flag
+8084: CB 7F         0182              BIT  I2C_SDA_RD,A   ;SDA input high?
+8086: 20 01         0183              JR   NZ,@Rotate     ;Yes, skip with carry flag set
+8088: 3F            0184              CCF                 ;Clear carry flag
+8089: CB 12         0185  @Rotate:    RL   D              ;Rotate result into D
+808B: CD BD 80      0186              CALL I2C_SCL_LO     ;SCL low   (SCL lo, SDA hi/input)
+808E: 10 ED         0187              DJNZ @Rd_Loop       ;Repeat for all 8 bits
+                    0188  ; Acknowledge input byte
+                    0189  ; On arriving here, SCL = lo, SDA = hi/input
+8090: CD CB 80      0190              CALL I2C_SDA_LO     ;SDA low   (SCL lo, SDA lo)
+8093: CD B6 80      0191              CALL I2C_SCL_HI     ;SCL hi    (SCL hi, SDA lo)
+8096: CD BD 80      0192              CALL I2C_SCL_LO     ;SCL low   (SCL lo, SDA lo)
+8099: 7A            0193              LD   A,D            ;Get data byte received
+809A: BF            0194              CP   A              ;Return success Z flagged
+809B: C9            0195              RET
+                    0196  
+                    0197  
+                    0198  ; I2C bus start
+                    0199  ;   On entry: SCL = unknown, SDA = unknown
+                    0200  ;   On exit:  SCL = low, SDA = low
+                    0201  ;             BC DE HL IX IY preserved
+                    0202  ; First ensure SDA and SCL are high
+809C: CD B6 80      0203  I2C_Start:  CALL I2C_SCL_HI     ;SCL high  (SCL hi, SDA ??)
+809F: CD C4 80      0204              CALL I2C_SDA_HI     ;SDA high  (SCL hi, SDA hi)
+                    0205  ; Generate I2C start condition
+80A2: CD CB 80      0206              CALL I2C_SDA_LO     ;SDA low   (SCL hi, SDA lo)
+80A5: CD BD 80      0207              CALL I2C_SCL_LO     ;SCL low   (SCL lo, SDA lo)
+80A8: C9            0208              RET
+                    0209  
+                    0210  
+                    0211  ; I2C bus stop 
+                    0212  ;   On entry: SCL = unknown, SDA = unknown
+                    0213  ;   On exit:  SCL = high, SDA = high
+                    0214  ;             BC DE HL IX IY preserved
+                    0215  ; First ensure SDA and SCL are low
+80A9: CD CB 80      0216  I2C_Stop:   CALL I2C_SDA_LO     ;SDA low   (SCL hi, SDA lo)
+80AC: CD BD 80      0217              CALL I2C_SCL_LO     ;SCL low   (SCL lo, SDA lo)
+                    0218  ; Generate stop condition
+80AF: CD B6 80      0219              CALL I2C_SCL_HI     ;SCL high  (SCL hi, SDA lo)
+80B2: CD C4 80      0220              CALL I2C_SDA_HI     ;SDA low   (SCL hi, SDA hi)
+80B5: C9            0221              RET
+                    0222  
+                    0223  
+                    0224  ; **********************************************************************
+                    0225  ; I2C bus simple I/O functions
+                    0226  ;   On entry: No parameters required
+                    0227  ;   On exit:  BC DE HL IX IY preserved
+                    0228  
+80B6:               0229  I2C_SCL_HI:
+80B6: 3A E9 80      0229  I2C_SCL_HI: LD   A,(I2C_RAMCPY)
+80B9: CB C7         0230              SET  I2C_SCL_WR,A
+80BB: 18 13         0231              JR   I2C_WrPort
+                    0232  
+80BD:               0233  I2C_SCL_LO:
+80BD: 3A E9 80      0233  I2C_SCL_LO: LD   A,(I2C_RAMCPY)
+80C0: CB 87         0234              RES  I2C_SCL_WR,A
+80C2: 18 0C         0235              JR   I2C_WrPort
+                    0236  
+80C4:               0237  I2C_SDA_HI:
+80C4: 3A E9 80      0237  I2C_SDA_HI: LD   A,(I2C_RAMCPY)
+80C7: CB FF         0238              SET  I2C_SDA_WR,A
+80C9: 18 05         0239              JR   I2C_WrPort
+                    0240  
+80CB:               0241  I2C_SDA_LO:
+80CB: 3A E9 80      0241  I2C_SDA_LO: LD   A,(I2C_RAMCPY)
+80CE: CB BF         0242              RES  I2C_SDA_WR,A
+                    0243              ;JR   I2C_WrPort
+                    0244  
+80D0:               0245  I2C_WrPort:
+80D0: C5            0245  I2C_WrPort: PUSH BC
+80D1: 06 00         0246              LD   B,0            ;Set up BC for 16-bit
+80D3: 0E 0C         0247              LD   C,I2C_PORT     ;  I/O address of I2C port
+80D5: ED 79         0248              OUT  (C),A          ;Write A to I2C I/O port
+80D7: 32 E9 80      0249              LD   (I2C_RAMCPY),A ;Write A to RAM copy
+80DA: C1            0250              POP  BC
+80DB: C9            0251              RET
+                    0252  
+80DC:               0253  I2C_RdPort:
+80DC: C5            0253  I2C_RdPort: PUSH BC
+80DD: 06 00         0254              LD   B,0            ;Set up BC for 16-bit
+80DF: 0E 0C         0255              LD   C,I2C_PORT     ;  I/O address of I2C port
+80E1: ED 78         0256              IN   A,(C)          ;Read A from I/O port
+80E3: C1            0257              POP  BC
+80E4: C9            0258              RET
+                    0259  
+                    0260  
+                    0261  ; **********************************************************************
+                    0262  ; Small computer monitor API
+                    0263  
+                    0264  ; Delay by DE milliseconds (approx)
+                    0265  ;   On entry: DE = Delay time in milliseconds
+                    0266  ;   On exit:  IX IY preserved
+80E5: 0E 0A         0267  API_Delay:  LD   C,0x0A
+80E7: F7            0268              RST  0x30
+80E8: C9            0269              RET
+                    0270  
+                    0271  
+                    0272  ; **********************************************************************
+                    0273  ; Workspace / variable in RAM
+                    0274  
+80E9:               0275  I2C_RAMCPY:
+80E9: 00            0275  I2C_RAMCPY: .DB  0
+                    0276  
+                    0277  
+                    0278  
+                    0279  
+                    0280  
+                    0281  
+                    0282  
+                    0283  
+ 
