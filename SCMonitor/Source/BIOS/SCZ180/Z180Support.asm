@@ -136,6 +136,7 @@ Z180Init:
             LD   A, 0b01100100
             OUT0 (CNTLA0), A
 ; And the same for channel 1 
+            LD   A, 0b01100110 ; 8E1 for keyboard
             OUT0 (CNTLA1), A
 
 ; ASCI Control Register B for channel 0 (CNTLB0, CNTLB1)
